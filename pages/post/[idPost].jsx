@@ -12,7 +12,7 @@ export default function Post() {
 
   React.useEffect(() => {
     console.log(router.query);
-  }, [])
+  }, [router.query])
   return (
     <div>
       <section className='flex min-h-screen max-w-7xl mx-auto'>
