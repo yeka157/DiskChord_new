@@ -50,10 +50,6 @@ export default function Feed(props) {
         setEdit(!edit);
     }
 
-    const btnPostDetail = () => {
-
-    }
-
     React.useEffect(() => {
         let token = localStorage.getItem('diskchord');
         if (token) {
@@ -98,7 +94,7 @@ export default function Feed(props) {
             <input type="text" hidden={edit} defaultValue={props.post.text} className='w-full border-b border-0 border-secondary focus:ring-0 placeholder-gray-700 tracking-wide text-gray-700 mb-2'/>
             { props.post.image && <img src={'http://localhost:3105' + props.post.image} alt="post-img" className='rounded-2xl mr-2 hover:brightness-90 cursor-pointer' /> }
             <div className='flex justify-between text-gray-600 p-2'>
-                <HiOutlineReply className='hoverEmoji h-9 w-9 p-2 text-gray-600 hover:text-sky-400' onClick={btnPostDetail}/> 
+                <HiOutlineReply className='hoverEmoji h-9 w-9 p-2 text-gray-600 hover:text-sky-400'/> 
                 {refresh ?
                 <HiRefresh className='text-green-400 hoverEmoji h-9 w-9 p-2' onClick={btnChangeGreen}/> :
                 <HiOutlineRefresh className='hoverEmoji h-9 w-9 p-2 text-gray-600 hover:text-green-400' onClick={btnChangeGreen}/>

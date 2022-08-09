@@ -4,6 +4,7 @@ import Feed from './Feed';
 import Tweet from './Tweet';
 import Axios from 'axios';
 import { useSelector } from 'react-redux';
+import Link from 'next/link';
 export default function Timeline() {
     const [list, setList] = React.useState([]);
 
@@ -31,7 +32,13 @@ export default function Timeline() {
         </div>
         <Tweet function={getPost}/>
         {list.map((val) => {
-            return <Feed key={val.idPost} post={val}/>
+            return (
+            <Link key={val.idPost} href={'/post/' + val.idPost}>
+                <div className='m-0 p-0'>
+                    <Feed key={val.idPost} post={val}/>
+                </div>
+            </Link>
+            )
         })}
     </div>
   )

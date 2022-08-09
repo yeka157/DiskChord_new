@@ -8,18 +8,18 @@ import TweetReply from '../../Components/TweetReply'
 
 export default function Post() {
   const router = useRouter();
-  const { idPost } = router.query;
+  const query = router.query;
+
+  const idPost = query.idPost;
 
   React.useEffect(() => {
-    console.log(router.query);
-  }, [router.query])
+    console.log(idPost);
+  }, [idPost])
   return (
     <div>
       <section className='flex min-h-screen max-w-7xl mx-auto'>
         <Sidebar active='explore'/>
-        <PostDetails params={router.query}/>
-        <Comment/>
-        <TweetReply/>
+        <PostDetails/>
       </section>
       <DirectMessage/>
     </div>
