@@ -1,16 +1,23 @@
-html,
-body {
-  padding: 0;
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+/* Quicksand Font */
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@layer components {
+  .hoverMouse {
+    @apply cursor-pointer hover:bg-secondaryHover rounded-full w-[52px] xl:w-auto h-[52px] xl:h-auto xl:p-3
+  }
+
+  .hoverEmoji {
+    @apply cursor-pointer hover:bg-gray-50 rounded-full w-[52px] xl:w-auto h-[52px] xl:h-auto xl:p-3
+  }
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-* {
-  box-sizing: border-box;
+@layer base {
+  * {
+    @apply font-quicksand
+  }
 }
