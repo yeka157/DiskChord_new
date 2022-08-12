@@ -33,11 +33,7 @@ export default function Timeline() {
         <Tweet function={getPost}/>
         {list.map((val) => {
             return (
-            <Link key={val.idPost} href={'/post/' + val.idPost}>
-                <div className='m-0 p-0'>
-                    <Feed key={val.idPost} post={val}/>
-                </div>
-            </Link>
+                    <Feed key={val.idPost} post={val} function={getPost}/>
             )
         })}
     </div>

@@ -32,13 +32,15 @@ import {
 } from "react-icons/hi";
 import Axios from "axios";
 import { Menu, MenuButton, MenuList, MenuItem, Button } from "@chakra-ui/react";
+import { useRouter } from "next/router";
 
 export default function Sidebar(props) {
   const [data, setData] = React.useState([]);
-
+  const router = useRouter();
 
   const btnLogout = () => {
-    
+    localStorage.clear();
+    router.replace('/');
   }
 
   React.useEffect(() => {

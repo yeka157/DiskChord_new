@@ -63,13 +63,13 @@ export default function Home() {
         }
       }).catch((err) => {
         console.log(err);
-        // toast({
-        //   title:"Wrong password",
-        //   description:'Wrong password or email',
-        //   status:'error',
-        //   duration:3000,
-        //   isClosable:true
-        // })
+        toast({
+          title:"Wrong password",
+          description:'Wrong password or email',
+          status:'error',
+          duration:3000,
+          isClosable:true
+        })
         setButton(false);
       })
     }, 3000);

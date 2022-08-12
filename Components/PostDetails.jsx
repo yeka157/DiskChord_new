@@ -6,25 +6,25 @@ import Axios from 'axios';
 import Comment from './Comment';
 import TweetReply from './TweetReply';
 
-export default function PostDetails() {
+export default function PostDetails(props) {
 
     const [list, setList] = React.useState([]);
 
-    // const getPost = () => {
-    //     Axios.get(`http://localhost:3105' + 'tweet/postDetails`, {
-    //         idPost : {idPost}
-    //     })
-    //     .then((res) => {
-    //         setList(res.data);
-    //     }).catch((err) => {
-    //         console.log(err);
-    //     })
-    // };
+    const getPost = () => {
+        Axios.get(`http://localhost:3105/tweet/postDetails/${props.params}`)
+        .then((res) => {
+            console.log(res.data);
+            setList(res.data);
+        })
+        .catch((err) => {
+            console.log(err);
+        })
+    };
 
     React.useEffect(()=> {
-        // getPost();
-        // console.log(list);
-        // console.log(props.params);
+        getPost();
+        console.log(list);
+        console.log(props.params);
     }, []);
 
   return (
@@ -43,7 +43,6 @@ export default function PostDetails() {
         {list.map((val) => {
             return <Feed key={val.idPost} post={val}/>
         })}
-        <h1>POST</h1>
         <Comment/>
         <TweetReply/>
     </div>
