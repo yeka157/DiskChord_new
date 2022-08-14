@@ -17,7 +17,7 @@ export default function Feed(props) {
 
     const [editText, setEditText] = React.useState('');
     moment().format();
-    
+
     const btnChangeGreen = () => {
         setRefresh(!refresh);
     }
@@ -60,6 +60,17 @@ export default function Feed(props) {
         }
     }
 
+    const btnDelete = async() => {
+        try {
+            let res = await Axios.get(`http://localhost:3105/tweet/delete/${props.post.idPost}`);
+            if (res.data.success) {
+                props.function();
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     React.useEffect(() => {
         let token = localStorage.getItem('diskchord');
         if (token) {
@@ -73,7 +84,7 @@ export default function Feed(props) {
                 }
             })
         };
-    });
+    }, []);
     
   return (
     <div className='flex p-3 cursor-pointer border-b border-secondaryHover'>
@@ -136,7 +147,7 @@ export default function Feed(props) {
                 <AiOutlineEdit className='hoverEmoji h-9 w-9 p-2 text-gray-600 hover:text-green-400' onClick={btnEdit}/> 
                 :
                 <></>}
-                {data.idusers === props.post.user_id && <AiOutlineDelete className='hoverEmoji h-9 w-9 p-2 text-gray-600 hover:text-red-500'/>}
+                {data.idusers === props.post.user_id && <AiOutlineDelete className='hoverEmoji h-9 w-9 p-2 text-gray-600 hover:text-red-500' onClick={btnDelete}/>}
             </div>
         </div>
     </div>

@@ -1,11 +1,61 @@
 import React from 'react';
 import { HiOutlineMail } from 'react-icons/hi';
 import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, FormControl, FormLabel, Input, useDisclosure, ModalFooter, Button } from '@chakra-ui/react';
+import { XIcon } from '@heroicons/react/outline';
 
 
 export default function NewBio(props) {
-    const { isOpen, onOpen, onClose } = useDisclosure();
+    const [images, setImages] = React.useState('');
+    const [selectedImg, setSelectedImg] = React.useState(null);
+    const [username, setUsername] = React.useState('');
+    const [usernameUsed, setUsernameUsed] = React.useState(false);
+    const [usernameMsg, setUsernameMsg] = React.useState('');
 
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    const filePickerRef = React.useRef(null);
+
+    const btnSave = () => {
+
+    }
+
+    const addImage = (e) => {
+        setImages(e.target.files[0]);
+        const reader = new FileReader();
+        if (e.target.files[0]) {
+            reader.readAsDataURL(e.target.files[0]);
+        };
+        reader.onload = (readerEvent) => {
+            setSelectedImg(readerEvent.target.result);
+        };
+    }
+
+    React.useEffect(() => {
+        if (username) {
+            Axios.post('http://localhost:3105' + '/auth/username', {
+                username
+            }).then((res) => {
+                if (res.data.length > 0) {
+                    let check = [];
+                    for (let i = 0; i < res.data.length; i++) {
+                        if (res.data[i].username.toLowerCase() === username.toLowerCase()) {
+                            check.push(true);
+                        }
+                    }
+                    if (check.length > 0) {
+                        setUsernameUsed(true);
+                    } else {
+                        setUsernameUsed(false);
+                    }
+                } else {
+                    setUsernameUsed(false);
+                }
+            })
+        }
+    }, [username]);
+
+    const btnVerify = () => {
+        
+    }
   return (
     <div className='pt-7 px-3 border-b border-secondaryHover pb-3'>
         <div className='flex space-x-3 justify-between items-center'>
@@ -35,23 +85,51 @@ export default function NewBio(props) {
                     <ModalBody pb={6}>
                         <FormControl>
                             <FormLabel>Full Name</FormLabel>
-                            <Input defaultValue={props.user.name}/>
+                            <Input defaultValue={props.user.name} type='text'/>
                         </FormControl>
                         <FormControl>
                             <FormLabel>Bio</FormLabel>
-                            <Input defaultValue={props.user.user_bio}/>
+                            <Input defaultValue={props.user.user_bio} type='text'/>
                         </FormControl>
                         <FormControl>
                             <FormLabel>Username</FormLabel>
-                            <Input defaultValue={props.user.username}/>
+                            <Input 
+                                defaultValue={props.user.username} 
+                                type='text'
+                                onChange={(e) => setUsername(e.target.value)}
+                            />
+                            {username ? (
+                                usernameUsed ? (
+                                    <small className='h-4 text-left w-full md:w-[50%] px-4 text-red-500 font-bold'>Username already used, try another username</small>
+                                ) : (
+                                    <small className='h-4 text-left w-full md:w-[50%] px-4 text-green-400 font-bold'>Username available</small>
+                                )
+                            ) : (
+                                <small className='h-4 text-left w-full md:w-[50%] px-4 text-green-400 font-bold'>{usernameMsg}</small>
+                            )}
                         </FormControl>
                         <FormControl>
                             <FormLabel>Profile Picture</FormLabel>
-                            <Input/>
+                            <div className='border p-2'>
+                                <Input type='file' hidden ref={filePickerRef} onChange={addImage}/>
+                                <Button onClick={() => filePickerRef.current.click()}>Browse</Button>
+                                {selectedImg && (
+                                    <div className='relative'>
+                                        <XIcon 
+                                            className='h-7 border m-1 border-white text-black absolute cursor-pointer font-bold rounded-full'
+                                            onClick={() => setSelectedImg(null)}
+                                        />
+                                        <img 
+                                            src={selectedImg} 
+                                            alt="profile-img"
+                                        />
+                                    </div>
+                                )}
+                            </div>
                         </FormControl>
                     </ModalBody>
                     <ModalFooter>
-                        <Button colorScheme='blue' mr={3}>Save</Button>
+                        <Button colorScheme='blue' mr={3} onClick={btnSave}>Save</Button>
                         <Button onClick={onClose} variant='outline'>Cancel</Button>
                     </ModalFooter>
                 </ModalContent>

@@ -2,7 +2,7 @@ import React from "react";
 import Head from "next/head";
 import Link from "next/link";
 import { FaDochub } from "react-icons/fa";
-import { Checkbox, useToast, Tooltip } from "@chakra-ui/react";
+import { Checkbox, useToast, Tooltip, Spinner } from "@chakra-ui/react";
 import Axios from "axios";
 import { useRouter } from "next/router";
 
@@ -19,6 +19,7 @@ export default function Register() {
   const [emailMsg, setEmailMsg] = React.useState("");
   const [button, setButton] = React.useState(true);
   const [data, setData] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
   const toast = useToast();
   const router = useRouter();
 
@@ -176,6 +177,14 @@ export default function Register() {
     }
   }, []);
 
+  React.useEffect(() => {
+    setTimeout(() => {
+      if (loading) {
+        setLoading(false);
+      }
+    }, 2000);
+  }, [loading])
+
   return (
     <div>
       <Head>
@@ -211,7 +220,21 @@ export default function Register() {
         <link rel="icon" href="/favicon.ico" />
         <title>DiskChord</title>
       </Head>
-      {data.idusers ? (
+      <div>
+      {loading ? (
+        <div className="flex items-center justify-center h-screen w-full">
+          <Spinner 
+            size='xl' 
+            thickness="4px" 
+            speed="0.7s" 
+            emptyColor="gray.200" 
+            color="blue.400"
+            className=""
+          />
+        </div>
+      )
+        : 
+        data.idusers ? (
         <div className="flex items-center justify-center min-h-screen">
           <h1 className="text-6xl">404 Error Page Not Found</h1>
         </div>
@@ -398,6 +421,7 @@ export default function Register() {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }

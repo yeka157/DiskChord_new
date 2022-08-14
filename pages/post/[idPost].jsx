@@ -8,16 +8,6 @@ import TweetReply from '../../Components/TweetReply'
 import Axios from 'axios';
 
 export default function Post(props) {
-  // const router = useRouter();
-  // const query = router.query;
-
-  // const idPost = query.idPost;
-
-  // React.useEffect(() => {
-  //   // console.log(idPost);
-  //   console.log(props.idPost);
-  // }, []);
-
   return (
     <div>
       <section className='flex min-h-screen max-w-7xl mx-auto'>

@@ -5,9 +5,11 @@ import Sidebar from "../../Components/Sidebar";
 import Timeline from "../../Components/Timeline";
 import Axios from 'axios';
 import Link from 'next/link';
+import { Spinner } from "@chakra-ui/react";
 
 export default function Index() {
   const [data, setData] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
 
   React.useEffect(()=> {
     let token = localStorage.getItem('diskchord');
@@ -24,6 +26,13 @@ export default function Index() {
     }
   }, []);
 
+  React.useEffect(() => {
+    setTimeout(() => {
+      if (loading) {
+        setLoading(false);
+      }      
+    }, 1000);
+  })
 
   return (
     <div>
@@ -60,7 +69,17 @@ export default function Index() {
         <link rel="icon" href="/favicon.ico" />
         <title>DiskChord</title>
       </Head>
-      {data.status === "Unverified" ? 
+      {loading ? (
+        <div className="flex items-center justify-center h-screen w-full">
+          <Spinner 
+            size='xl' 
+            thickness="4px" 
+            speed="0.7s" 
+            emptyColor="gray.200" 
+            color="blue.400" 
+          />
+        </div>
+      ) : data.status === "Unverified" ? (
       <>
       <div className="flex flex-col items-center justify-center space-y-3 min-h-screen max-w-7xl mx-auto">
         <h1 className="text-5xl text-center">You can only use this page after you verify your account</h1>
@@ -68,7 +87,8 @@ export default function Index() {
           <button className="bg-blue-400 text-neutral rounded-full w-56 h-12 font-bold shadow-md hover:brightness-90 text-lg ">Go to profile</button>
         </Link>
       </div>
-      </> :
+      </>
+      ) : (
       <>
       <section className="flex min-h-screen max-w-7xl mx-auto">
         <Sidebar active="home"/>
@@ -76,6 +96,7 @@ export default function Index() {
       </section>
       <DirectMessage/>
       </>
+      )
       }
     </div>
   );

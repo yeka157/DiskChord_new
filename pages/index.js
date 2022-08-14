@@ -1,4 +1,4 @@
-import { Divider, Checkbox, useToast } from '@chakra-ui/react';
+import { Divider, Checkbox, useToast, Spinner } from '@chakra-ui/react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { FaDochub, FaFacebook, FaReddit } from 'react-icons/fa';
@@ -16,6 +16,7 @@ export default function Home() {
   const [button, setButton] = React.useState(true);
   const [visibility, setVisibility] = React.useState('password');
   const [data, setData] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
   const router = useRouter();
   const toast = useToast();
 
@@ -36,7 +37,7 @@ export default function Home() {
         username,
         password
       }).then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
         if (res.data.idusers) {
           localStorage.setItem('diskchord', res.data.token);
           if (res.data.token) {
@@ -64,8 +65,8 @@ export default function Home() {
       }).catch((err) => {
         console.log(err);
         toast({
-          title:"Wrong password",
-          description:'Wrong password or email',
+          title:"Error Login",
+          description:'Error Login',
           status:'error',
           duration:3000,
           isClosable:true
@@ -112,6 +113,14 @@ export default function Home() {
     }
   }, []);
 
+  React.useEffect(() => {
+    setTimeout(() => {
+      if (loading) {
+        setLoading(false);
+      }
+    }, 2000);
+  }, [loading]);
+  
   return (
     <div>
       <Head>
@@ -135,11 +144,21 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
         <title>DiskChord</title>
       </Head>
-      {data.idusers ? 
+      {loading ? (
+        <div className='flex items-center justify-center h-screen w-full'>
+          <Spinner
+            size='xl' 
+            thickness='4px' 
+            speed='0.7s' 
+            emptyColor='gray.200' 
+            color='blue.400'/>
+        </div>
+      ) : 
+        data.idusers ? (
       <div className='flex items-center justify-center min-h-screen'>
         <h1 className='text-6xl'>404 Error Page Not Found</h1> 
       </div>
-      :
+      ) : (
       <div style={{ backgroundImage: `url(/bg1-mirror.png)`, backgroundSize: 'cover', overflow: 'hidden', maxWidth: '100%' }} className='h-screen flex items-center'>
         <div className='container mx-auto h-[75vh] lg:max-w-[1320px] lg:min-w-[1320px]'>
           <div className='h-full lg:grid grid-cols-3 flex flex-col'>
@@ -195,6 +214,7 @@ export default function Home() {
           </div>
         </div>
       </div>
+      )
       }
     </div>
   )

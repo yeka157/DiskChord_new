@@ -9,22 +9,34 @@ import TweetReply from './TweetReply';
 export default function PostDetails(props) {
 
     const [list, setList] = React.useState([]);
+    const [listComment, setListComment] = React.useState([]);
 
-    const getPost = () => {
-        Axios.get(`http://localhost:3105/tweet/postDetails/${props.params}`)
-        .then((res) => {
-            console.log(res.data);
+    const getPost = async() => {
+        try {
+            let res = await Axios.get(`http://localhost:3105/tweet/postDetails/${props.params}`)
+            // console.log(res.data);
             setList(res.data);
-        })
-        .catch((err) => {
-            console.log(err);
-        })
+        } catch (error) {
+            console.log(error);
+        }
     };
+
+    const getComment = async() => {
+        try {
+            let res = await Axios.get(`http://localhost:3105/comment/${props.params}`);
+            // console.log(res);
+            setListComment(res.data);
+            // console.log(res.data);
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     React.useEffect(()=> {
         getPost();
-        console.log(list);
+        getComment();
         console.log(props.params);
+        console.log(listComment);
     }, []);
 
   return (
@@ -43,8 +55,17 @@ export default function PostDetails(props) {
         {list.map((val) => {
             return <Feed key={val.idPost} post={val}/>
         })}
-        <Comment/>
-        <TweetReply/>
+        {listComment.map((val) => {
+            return <Comment key={val.idPost} post={val}/>
+        })}
+        <div className='flex justify-end mt-2'>
+        <button 
+            className='bg-blue-400 text-white font-bold px-2 py-1 rounded-full hover:brightness-90'
+        >
+            Show More
+        </button>
+        </div>
+        <TweetReply id={list.idPost}/>
     </div>
   )
 }

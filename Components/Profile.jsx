@@ -69,7 +69,7 @@ export default function Profile() {
       <NewBio user={data}/>
       {/* <Bio /> */}
       {list.map((val) => {
-        return <Feed key={val.id} post={val} user={data}/>;
+        return <Feed key={val.id} post={val} user={data} function={getPost}/>;
       })}
     </div>
   );
