@@ -51,6 +51,8 @@ export default function Register() {
               duration: 5000,
               isClosable: true,
             });
+            console.log(res.data.token);
+            localStorage.setItem('verification', res.data.token);
             setUsername("");
             setEmail("");
             setPassword("");

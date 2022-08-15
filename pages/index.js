@@ -17,63 +17,52 @@ export default function Home() {
   const [visibility, setVisibility] = React.useState('password');
   const [data, setData] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
+  const [throttle, setThrottle] = React.useState(false);
   const router = useRouter();
   const toast = useToast();
 
-  const btnLogin = () => {
-    var mailFormat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-    console.log("button click");
-    if (textInput.match(mailFormat)){
-      setEmail(textInput);
-      setUsername("");
-    } else {
-      setUsername(textInput);
-      setEmail('');
-    }
-    setButton(true);
-    setTimeout(() => {
-      Axios.post('http://localhost:3105/auth/login', {
-        email,
-        username,
-        password
-      }).then((res) => {
-        // console.log(res.data);
-        if (res.data.idusers) {
-          localStorage.setItem('diskchord', res.data.token);
-          if (res.data.token) {
-            setTextInput('');
-            setPassword('');
-            setEmail('');
-            setUsername('');
-            setButton(false);
+  const btnLogin = async() => {
+    try {
+      setThrottle(true); // disable and throttle
+      setTimeout(async() => {
+        try {
+          let res = await Axios.post('http://localhost:3105/auth/login', {
+            email,
+            username,
+            password
+          });
+          if (res.data.idusers) {
+            localStorage.setItem('diskchord', res.data.token);
             router.replace('/home');
+          } else {
+            toast({
+              title : 'Wrong password',
+              description : 'Wrong username or password',
+              status : 'error',
+              duration : 3000,
+              isClosable : true
+            })
           }
-        } else {
-          toast({
-            title : 'Wrong password',
-            description : 'Wrong password',
-            status : 'error',
-            duration : 3000,
-            isClosable : true
-          })
           setTextInput('');
           setPassword('');
           setEmail('');
           setUsername('');
-          setButton(false);
+          setThrottle(false);
+        } catch (error) {
+          console.log(error);
         }
-      }).catch((err) => {
-        console.log(err);
-        toast({
-          title:"Error Login",
-          description:'Error Login',
-          status:'error',
-          duration:3000,
-          isClosable:true
-        })
-        setButton(false);
+      }, 2500);
+    } catch (error) {
+      console.log(error);
+      toast({
+        title : 'Error Login',
+        description : 'Error Login',
+        status : 'error',
+        duration : 3000,
+        isClosable : true
       })
-    }, 3000);
+      setButton(false);
+    }
   }
 
   const btnShow = () => {
@@ -87,7 +76,7 @@ export default function Home() {
   const btnForgot = () => {
     console.log("test");
   }
-  
+
   React.useEffect(() => {
     let text = textInput.replace(/^\s+|\s+$/gm, "");
     let text1 = password.replace(/^\s+|\s+$/gm, "");
@@ -120,7 +109,17 @@ export default function Home() {
       }
     }, 2000);
   }, [loading]);
-  
+
+  React.useEffect(() => {
+    var mailFormat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (textInput.match(mailFormat)){
+      setEmail(textInput);
+      setUsername('');
+    } else {
+      setUsername(textInput);
+      setEmail('');
+    }
+  }, [textInput, email, username])
   return (
     <div>
       <Head>
@@ -196,8 +195,10 @@ export default function Home() {
                     <Checkbox className='text-start px-2.5 w-full md:w-[50%] text-sm'>Keep me signed in</Checkbox>
                     <p className='text-end px-2.5 w-full md:w-[50%] text-sm hover:underline hover:text-primary cursor-pointer' onClick={btnForgot}>Forgot Password?</p>
                   </div>
+                  {throttle ? <><Spinner size='md' thickness='4px' speed='0.7s' emptyColor='gray.200' color='blue.400'/></> : 
                     <button className='bg-telegram hover:brightness-90 w-40 h-12 rounded-full text-neutral font-bold disabled:opacity-50 disabled:hover:brightness-100' 
                     onClick={btnLogin} disabled={button}>Sign In</button>
+                  }
                 </div>
               </div>
             </div>
@@ -219,19 +220,3 @@ export default function Home() {
     </div>
   )
 }
-
-/**
- * Server Side Rendering 
- * when user access 
- * getServerSideProps (masukin ke setiap page)
- * 
- * export async function getServerSideProps() {
- *  
- * 
- *  return {
- *    props : {
- *      data
- *    }
- * }
- * }
- */

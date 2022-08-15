@@ -10,7 +10,7 @@ export default function Comment(props) {
       <div className='flex p-3  py-1 cursor-pointer border-y border-secondaryHover'>
           {/* foto */}
           <img 
-            src={props.post.user_profilepicture ? props.post.user_profilepicture : '/default.jpg'}
+            src={props.post.user_profilepicture ? 'http://localhost:3105' + props.post.user_profilepicture : '/default.jpg'}
             alt="profile-img" 
             className='aspect-square h-11 w-11 rounded-full mr-4 hover:brightness-90 cursor-pointer'
           />

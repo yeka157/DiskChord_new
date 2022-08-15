@@ -60,7 +60,7 @@ export default function PostDetails(props) {
         })}
         <div className='flex justify-end mt-2'>
         <button 
-            className='bg-blue-400 text-white font-bold px-2 py-1 rounded-full hover:brightness-90'
+            className='bg-blue-400 text-white font-bold mx-2 px-2 py-1 rounded-full hover:brightness-90'
         >
             Show More
         </button>

@@ -90,7 +90,7 @@ export default function Feed(props) {
     <div className='flex p-3 cursor-pointer border-b border-secondaryHover'>
 
         {/* PROFILE */}
-        <img src={props.post.user_profilepicture ? props.post.user_profilepicture : '/default.jpg'} alt="user-img" className='aspect-square h-11 w-11 rounded-full mr-4 hover:brightness-90 cursor-pointer'/>
+        <img src={props.post.user_profilepicture ? 'http://localhost:3105' + props.post.user_profilepicture : '/default.jpg'} alt="user-img" className='aspect-square h-11 w-11 rounded-full mr-4 hover:brightness-90 cursor-pointer'/>
 
 
         {/* Content and everything */}

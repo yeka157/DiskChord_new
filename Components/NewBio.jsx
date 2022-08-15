@@ -1,24 +1,58 @@
 import React from 'react';
 import { HiOutlineMail } from 'react-icons/hi';
-import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, FormControl, FormLabel, Input, useDisclosure, ModalFooter, Button } from '@chakra-ui/react';
+import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, FormControl, FormLabel, Input, useDisclosure, ModalFooter, Button, useToast } from '@chakra-ui/react';
 import { XIcon } from '@heroicons/react/outline';
-
+import Axios from 'axios';
 
 export default function NewBio(props) {
     const [images, setImages] = React.useState('');
+    const [bio, setBio] = React.useState(props.user.user_bio);
+    const [fullName, setFullName] = React.useState('');
     const [selectedImg, setSelectedImg] = React.useState(null);
     const [username, setUsername] = React.useState('');
     const [usernameUsed, setUsernameUsed] = React.useState(false);
     const [usernameMsg, setUsernameMsg] = React.useState('');
+    const toast = useToast();
 
     const { isOpen, onOpen, onClose } = useDisclosure();
     const filePickerRef = React.useRef(null);
 
-    const btnSave = () => {
-
+    const btnSave = async() => {
+        try {
+            console.log(username);
+            console.log(fullName);
+            let formData = new FormData();
+            formData.append(
+                "data",
+                JSON.stringify({
+                    username,
+                    name : fullName,
+                    user_bio : bio
+                })
+            );
+            images && formData.append('images', images);
+            if (images) {
+                let res = await Axios.patch(`http://localhost:3105/auth/update/${props.user.idusers}`, formData);
+                if (res.data.success) {
+                    //props.function()
+                    //set state default
+                    //close modal
+                }
+            } else if (!images) {
+                let res = await Axios.patch(`http://localhost:3105/auth/edit/${props.user.idusers}`, formData);
+                if (res.data.success) {
+                    //props.function()
+                    //set state default
+                    //close modal
+                }
+            }
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     const addImage = (e) => {
+        console.log(e.target.files);
         setImages(e.target.files[0]);
         const reader = new FileReader();
         if (e.target.files[0]) {
@@ -31,37 +65,60 @@ export default function NewBio(props) {
 
     React.useEffect(() => {
         if (username) {
-            Axios.post('http://localhost:3105' + '/auth/username', {
-                username
-            }).then((res) => {
-                if (res.data.length > 0) {
-                    let check = [];
-                    for (let i = 0; i < res.data.length; i++) {
-                        if (res.data[i].username.toLowerCase() === username.toLowerCase()) {
-                            check.push(true);
+            if (username === props.user.username) {
+                setUsernameUsed(false);
+            } else {
+                Axios.post('http://localhost:3105' + '/auth/username', {
+                    username
+                }).then((res) => {
+                    if (res.data.length > 0) {
+                        let check = [];
+                        for (let i = 0; i < res.data.length; i++) {
+                            if (res.data[i].username.toLowerCase() === username.toLowerCase()) {
+                                check.push(true);
+                            }
                         }
-                    }
-                    if (check.length > 0) {
-                        setUsernameUsed(true);
+                        if (check.length > 0) {
+                            setUsernameUsed(true);
+                        } else {
+                            setUsernameUsed(false);
+                        }
                     } else {
                         setUsernameUsed(false);
                     }
-                } else {
-                    setUsernameUsed(false);
-                }
-            })
+                })
+            }
         }
     }, [username]);
 
-    const btnVerify = () => {
-        
+    const btnVerify = async() => {
+        //send verify email
+        console.log(props.user.email);
+        try {
+            let res = await Axios.post('http://localhost:3105/auth/send', {
+                email : props.user.email
+            });
+            if (res.data.success) {
+                localStorage.setItem('verification', res.data.token);
+                toast({
+                    title : 'Verification email sent',
+                    description : 'Please check your email',
+                    status : 'success',
+                    duration : 3000,
+                    isClosable : true
+                })
+            }
+        } catch (error) {
+            console.log(error);
+        }
     }
+
   return (
     <div className='pt-7 px-3 border-b border-secondaryHover pb-3'>
         <div className='flex space-x-3 justify-between items-center'>
             <div className='flex items-center space-x-3'>
             <img 
-                src={props.user.user_profilepicture ? props.users.user_profilepicture : '/default.jpg'} 
+                src={props.user.user_profilepicture ? 'http://localhost:3105' + props.users.user_profilepicture : '/default.jpg'} 
                 alt="profile-img" 
                 className='p-1 w-32 h-32 cursor-pointer hover:brightness-90 rounded-full'
                 style={{border:'2px solid black'}}
@@ -72,7 +129,7 @@ export default function NewBio(props) {
             </div>
             <div className=''>
                 {props.user.status === "Unverified" ? 
-                <button className='my-2.5 mx-1.5 w-25 h-9 rounded-full bg-secondaryHover text-secondary px-4 py-1.5 font-semibold hover:brightness-90 shadow-md'>Verify Account</button>
+                <button className='my-2.5 mx-1.5 w-25 h-9 rounded-full bg-secondaryHover text-secondary px-4 py-1.5 font-semibold hover:brightness-90 shadow-md' onClick={btnVerify}>Verify Account</button>
                 : <></>
                 }
                 <button className='my-2.5 mx-1.5 w-25 h-9 rounded-full bg-secondaryHover text-secondary px-4 py-1.5 font-semibold hover:brightness-90 shadow-md' onClick={onOpen}>Edit Profile</button>
@@ -85,11 +142,11 @@ export default function NewBio(props) {
                     <ModalBody pb={6}>
                         <FormControl>
                             <FormLabel>Full Name</FormLabel>
-                            <Input defaultValue={props.user.name} type='text'/>
+                            <Input defaultValue={props.user.name} type='text' onChange={(e) => setFullName(e.target.value)}/>
                         </FormControl>
                         <FormControl>
                             <FormLabel>Bio</FormLabel>
-                            <Input defaultValue={props.user.user_bio} type='text'/>
+                            <Input defaultValue={props.user.user_bio} type='text' onChange={(e) => setBio(e.target.value)}/>
                         </FormControl>
                         <FormControl>
                             <FormLabel>Username</FormLabel>
@@ -122,6 +179,7 @@ export default function NewBio(props) {
                                         <img 
                                             src={selectedImg} 
                                             alt="profile-img"
+                                            className='mt-2'
                                         />
                                     </div>
                                 )}

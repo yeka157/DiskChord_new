@@ -1,21 +1,37 @@
 import React from 'react';
 import { useRouter } from 'next/router';
+import Axios from 'axios';
+import { useToast } from '@chakra-ui/react';
 
 export default function Index(props) {
-  
+  const toast = useToast();
   const Router = useRouter();
 
   const btnVerify = async() => {
     try {
-      if (props.token) {
+      let verificationJwt = localStorage.getItem('verification');
+      if (props.token === verificationJwt) {
         let res = await Axios.get(`http://localhost:3105/auth/verify`, {
           headers : {
             'Authorization' : `Bearer ${props.token}`
           }
         })
-      }  
+        console.log(props.token);
+        if (res.data.idusers) {
+          localStorage.setItem('diskchord', res.data.token);
+          Router.replace('/home');
+        }
+      } else {
+        toast({
+          title : 'Link expired',
+          description : 'Verification Link Expired, Please Re-send verification email',
+          status : 'error',
+          duration : 3000,
+          isClosable : true
+        })
+      }
     } catch (error) {
-      
+      console.log(error);
     }
   }
 

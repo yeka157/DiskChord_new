@@ -96,7 +96,7 @@ export default function Tweet(props) {
   return (
     <div className="flex border-b border-secondaryHover p-3 space-x-3">
       <img
-        src={data.user_profilepicture? data.user_profilepicture : '/default.jpg'}
+        src={data.user_profilepicture? 'http://localhost:3105' + data.user_profilepicture : '/default.jpg'}
         alt="profile-img"
         className="aspect-square h-11 w-11 rounded-full cursor-pointer hover:brightness-90"
       />
