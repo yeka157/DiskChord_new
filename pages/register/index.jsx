@@ -20,6 +20,7 @@ export default function Register() {
   const [button, setButton] = React.useState(true);
   const [data, setData] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
+  const [throttle, setThrottle] = React.useState(false);
   const toast = useToast();
   const router = useRouter();
 
@@ -36,7 +37,7 @@ export default function Register() {
       !usernameUsed &&
       !usedEmail
     ) {
-      setButton(true);
+      setThrottle(true);
       setTimeout(() => {
         Axios.post("http://localhost:3105" + "/auth/register", {
           username,
@@ -51,12 +52,12 @@ export default function Register() {
               duration: 5000,
               isClosable: true,
             });
-            console.log(res.data.token);
             localStorage.setItem('verification', res.data.token);
             setUsername("");
             setEmail("");
             setPassword("");
             setRepeatPassword("");
+            setThrottle(false);
           }
         });
       }, 3000);
@@ -408,7 +409,7 @@ export default function Register() {
                       Privacy Policy
                     </p>{" "}
                   </Checkbox>
-                  {/* <Link href='/home'> */}
+                  {throttle ? <><Spinner size='md' thickness='4px' speed='0.7s' emptyColor="gray.200" color="blue.400"/></> : 
                   <button
                     className="bg-facebook rounded-full w-40 h-12 text-white hover:brightness-90 font-bold disabled:opacity-50 disabled:hover:brightness-100"
                     onClick={btnRegister}
@@ -416,7 +417,7 @@ export default function Register() {
                   >
                     Sign Up
                   </button>
-                  {/* </Link> */}
+                  }
                 </div>
               </div>
             </div>

@@ -18,6 +18,7 @@ export default function Index(props) {
         })
         console.log(props.token);
         if (res.data.idusers) {
+          localStorage.removeItem('verification');
           localStorage.setItem('diskchord', res.data.token);
           Router.replace('/home');
         }
@@ -31,6 +32,13 @@ export default function Index(props) {
         })
       }
     } catch (error) {
+      toast({
+        title : 'Verification Error',
+        description : 'Link expired, Please Request Another Verification Link in Your Profile',
+        status : 'error',
+        duration : 3000,
+        isClosable : true
+      })
       console.log(error);
     }
   }

@@ -98,7 +98,7 @@ export default function Tweet(props) {
       <img
         src={data.user_profilepicture? 'http://localhost:3105' + data.user_profilepicture : '/default.jpg'}
         alt="profile-img"
-        className="aspect-square h-11 w-11 rounded-full cursor-pointer hover:brightness-90"
+        className="aspect-square h-11 w-11 rounded-full cursor-pointer hover:brightness-90" style={{border: '1px solid #040615'}}
       />
       <div className="w-full divide-y divider-gray-300">
         <div className="">

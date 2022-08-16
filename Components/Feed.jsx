@@ -23,24 +23,31 @@ export default function Feed(props) {
     }
 
     const btnLike = () => {
-        if (!like) {
-            Axios.post('http://localhost:3105/likes/add', {
-                idPost : props.post.idPost,
-                user_id : res.data.idusers
-            }).then((res) => {
-                setLike(!like);
-                let total = totalLike
-                setTotalLike(total++);
-            })
-        } else if (like) {
-            Axios.post('http://localhost:3105/likes/unlike', {
-                id : props.post.idPost,
-                user_id : res.data.idusers
-            }).then((res) => {
-                setLike(!like);
-                setTotalLike(totalLike--);
-            })
-        }
+        // add to mySQL
+        // props.function()
+        // if (!like) {
+        //     Axios.post('http://localhost:3105/likes/add', {
+        //         idPost : props.post.idPost,
+        //         user_id : res.data.idusers
+        //     }).then((res) => {
+        //         setLike(!like);
+        //         let total = totalLike
+        //         setTotalLike(total++);
+        //     })
+        // } else if (like) {
+        //     Axios.post('http://localhost:3105/likes/unlike', {
+        //         id : props.post.idPost,
+        //         user_id : res.data.idusers
+        //     }).then((res) => {
+        //         setLike(!like);
+        //         setTotalLike(totalLike--);
+        //     })
+        // }
+    }
+
+    const btnUnlike = () => {
+        //delete mysql
+        //props.function()
     }
 
     const btnEdit = () => {
@@ -62,7 +69,7 @@ export default function Feed(props) {
 
     const btnDelete = async() => {
         try {
-            let res = await Axios.get(`http://localhost:3105/tweet/delete/${props.post.idPost}`);
+            let res = await Axios.delete(`http://localhost:3105/tweet/delete/${props.post.idPost}`);
             if (res.data.success) {
                 props.function();
             }
@@ -90,8 +97,7 @@ export default function Feed(props) {
     <div className='flex p-3 cursor-pointer border-b border-secondaryHover'>
 
         {/* PROFILE */}
-        <img src={props.post.user_profilepicture ? 'http://localhost:3105' + props.post.user_profilepicture : '/default.jpg'} alt="user-img" className='aspect-square h-11 w-11 rounded-full mr-4 hover:brightness-90 cursor-pointer'/>
-
+        <img src={props.post.user_profilepicture ? `http://localhost:3105${props.post.user_profilepicture}` : '/default.jpg'} alt="user-img" className='aspect-square h-11 w-11 rounded-full mr-4 hover:brightness-90 cursor-pointer'/>
 
         {/* Content and everything */}
         <div className='w-full'>

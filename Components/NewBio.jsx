@@ -5,11 +5,11 @@ import { XIcon } from '@heroicons/react/outline';
 import Axios from 'axios';
 
 export default function NewBio(props) {
-    const [images, setImages] = React.useState('');
+    const [images, setImages] = React.useState("");
     const [bio, setBio] = React.useState(props.user.user_bio);
-    const [fullName, setFullName] = React.useState('');
+    const [fullName, setFullName] = React.useState("");
     const [selectedImg, setSelectedImg] = React.useState(null);
-    const [username, setUsername] = React.useState('');
+    const [username, setUsername] = React.useState("");
     const [usernameUsed, setUsernameUsed] = React.useState(false);
     const [usernameMsg, setUsernameMsg] = React.useState('');
     const toast = useToast();
@@ -19,32 +19,59 @@ export default function NewBio(props) {
 
     const btnSave = async() => {
         try {
-            console.log(username);
-            console.log(fullName);
-            let formData = new FormData();
-            formData.append(
-                "data",
-                JSON.stringify({
-                    username,
-                    name : fullName,
-                    user_bio : bio
+            if (usernameUsed === false) {
+                if (images) {
+                let formData = new FormData();
+                formData.append(
+                    "data",
+                    JSON.stringify({
+                        username,
+                        name : fullName,
+                        user_bio : bio
+                    })
+                );
+                images && formData.append('images', images);
+                    let res = await Axios.patch(`http://localhost:3105/auth/update/${props.user.idusers}`, formData);
+                    if (res.data.success) {
+                        props.function();
+                        toast({
+                            title:'Profile Updated',
+                            status : 'success',
+                            duration : 2000,
+                            isClosable : true
+                        })
+                        onClose();
+                        setUsername("");
+                        setFullName("");
+                        setBio("");
+                    }
+                } else if (!images) {
+                    let res = await Axios.patch(`http://localhost:3105/auth/edit/${props.user.idusers}`, {
+                        username,
+                        name : fullName,
+                        user_bio : bio
+                    });
+                    if (res.data.success) {
+                        props.function()
+                        toast({
+                            title:'Profile Updated',
+                            status : 'success',
+                            duration : 2000,
+                            isClosable : true
+                        })
+                        onClose();
+                        setUsername("");
+                        setFullName("");
+                        setBio("");
+                    }
+                }
+            } else if (usernameUsed === true) {
+                toast({
+                    title : 'Username used',
+                    status : 'error',
+                    duration : 2000,
+                    isClosable : true
                 })
-            );
-            images && formData.append('images', images);
-            if (images) {
-                let res = await Axios.patch(`http://localhost:3105/auth/update/${props.user.idusers}`, formData);
-                if (res.data.success) {
-                    //props.function()
-                    //set state default
-                    //close modal
-                }
-            } else if (!images) {
-                let res = await Axios.patch(`http://localhost:3105/auth/edit/${props.user.idusers}`, formData);
-                if (res.data.success) {
-                    //props.function()
-                    //set state default
-                    //close modal
-                }
             }
         } catch (error) {
             console.log(error);
@@ -92,17 +119,26 @@ export default function NewBio(props) {
     }, [username]);
 
     const btnVerify = async() => {
-        //send verify email
-        console.log(props.user.email);
         try {
-            let res = await Axios.post('http://localhost:3105/auth/send', {
-                email : props.user.email
-            });
-            if (res.data.success) {
-                localStorage.setItem('verification', res.data.token);
+            if (props.user.status === "Unverified") {
+                let res = await Axios.post('http://localhost:3105/auth/send', {
+                    email : props.user.email
+                });
+                if (res.data.success) {
+                    localStorage.setItem('verification', res.data.token);
+                    toast({
+                        title : 'Verification email sent',
+                        description : 'Please check your email',
+                        status : 'success',
+                        duration : 3000,
+                        isClosable : true
+                    })
+                    props.function();
+                }
+            } else {
                 toast({
-                    title : 'Verification email sent',
-                    description : 'Please check your email',
+                    title : 'Account verified',
+                    description : 'Account already verified',
                     status : 'success',
                     duration : 3000,
                     isClosable : true
@@ -118,7 +154,7 @@ export default function NewBio(props) {
         <div className='flex space-x-3 justify-between items-center'>
             <div className='flex items-center space-x-3'>
             <img 
-                src={props.user.user_profilepicture ? 'http://localhost:3105' + props.users.user_profilepicture : '/default.jpg'} 
+                src={props.user.user_profilepicture ? `http://localhost:3105/${props.user.user_profilepicture}` : '/default.jpg'} 
                 alt="profile-img" 
                 className='p-1 w-32 h-32 cursor-pointer hover:brightness-90 rounded-full'
                 style={{border:'2px solid black'}}
@@ -174,7 +210,7 @@ export default function NewBio(props) {
                                     <div className='relative'>
                                         <XIcon 
                                             className='h-7 border m-1 border-white text-black absolute cursor-pointer font-bold rounded-full'
-                                            onClick={() => setSelectedImg(null)}
+                                            onClick={() => {setSelectedImg(null); setImages('');}}
                                         />
                                         <img 
                                             src={selectedImg} 
@@ -202,3 +238,6 @@ export default function NewBio(props) {
     </div>
   )
 }
+
+// http://localhost:3105/imgProfile/IMGPRFL1660567449389.png
+// http://localhost:3105/imgProfile/IMGPRFL1660567449389.png

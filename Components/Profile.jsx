@@ -25,6 +25,21 @@ export default function Profile() {
     })
   }
 
+  const refreshUser = () => {
+    let token = localStorage.getItem('diskchord');
+    if (token) {
+      Axios.get('http://localhost:3105/auth/keep', {
+        headers : {
+          'Authorization' : `Bearer ${token}`
+        }
+      }).then((res) => {
+        if (res.data.idusers) {
+          setData(res.data);
+        }
+      })
+    }
+  }
+
   React.useEffect(()=> {
     getPost();
   }, []);
@@ -66,7 +81,7 @@ export default function Profile() {
           </div>
         </div>
       </div>
-      <NewBio user={data}/>
+      <NewBio user={data} function={refreshUser}/>
       {/* <Bio /> */}
       {list.map((val) => {
         return <Feed key={val.id} post={val} user={data} function={getPost}/>;

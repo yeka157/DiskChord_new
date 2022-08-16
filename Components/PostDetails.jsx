@@ -35,8 +35,8 @@ export default function PostDetails(props) {
     React.useEffect(()=> {
         getPost();
         getComment();
-        console.log(props.params);
-        console.log(listComment);
+        // console.log(props.params);
+        // console.log(list);
     }, []);
 
   return (
@@ -59,13 +59,15 @@ export default function PostDetails(props) {
             return <Comment key={val.idPost} post={val}/>
         })}
         <div className='flex justify-end mt-2'>
+        {listComment.length > 5 && 
         <button 
             className='bg-blue-400 text-white font-bold mx-2 px-2 py-1 rounded-full hover:brightness-90'
         >
             Show More
         </button>
+        }
         </div>
-        <TweetReply id={list.idPost}/>
+        <TweetReply id={props.params} function={getComment}/>
     </div>
   )
 }

@@ -70,7 +70,7 @@ export default function Sidebar(props) {
         {/* LOGO */}
         <Link href="/home">
           <div className="hoverMouse flex items-center justify-center hover:bg-blue-50 xl:px-1 w-[52px] h-[52px]">
-            <Image
+            <img
               src="/dochub-brands.png"
               alt="logo"
               width="30"
@@ -156,10 +156,10 @@ export default function Sidebar(props) {
       <div className="hoverMouse text-gray-700 flex items-center justify-center xl:justify-start space-x-1 w-full">
         <div className="flex justify-between w-full">
           <div className="flex items-center justify-center xl:justify-start space-x-1 w-[75%]">
-            <Image
+            <img
               src={
                 data.user_profilepicture
-                  ? data.user_profilepicture
+                  ? `http://localhost:3105${data.user_profilepicture}`
                   : "/default.jpg"
               }
               alt="profile-img"
@@ -175,7 +175,7 @@ export default function Sidebar(props) {
           <Menu>
             <MenuButton
               as={Button}
-              variant="ghost"
+              variant="link"
               size="md"
               color="whiteAlpha"
               style={{width:'5px', padding:'0px'}}
