@@ -10,11 +10,11 @@ export default function PostDetails(props) {
 
     const [list, setList] = React.useState([]);
     const [listComment, setListComment] = React.useState([]);
+    const [commentLength, setCommentLength] = React.useState(0);
 
     const getPost = async() => {
         try {
             let res = await Axios.get(`http://localhost:3105/tweet/postDetails/${props.params}`)
-            // console.log(res.data);
             setList(res.data);
         } catch (error) {
             console.log(error);
@@ -24,9 +24,22 @@ export default function PostDetails(props) {
     const getComment = async() => {
         try {
             let res = await Axios.get(`http://localhost:3105/comment/${props.params}`);
-            // console.log(res);
             setListComment(res.data);
-            // console.log(res.data);
+            console.log(res.data.length);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const getMoreComment = async() => {
+        try {
+            let res = await Axios.post(`http://localhost:3105/comment/more/${props.params}`, {
+                offset : listComment.length,
+                limit : 5
+            });
+            if (res.data.length > 0) {
+                setListComment([...listComment, ...res.data]);
+            }
         } catch (error) {
             console.log(error);
         }
@@ -39,6 +52,14 @@ export default function PostDetails(props) {
         // console.log(list);
     }, []);
 
+    React.useEffect(() => {
+        Axios.get(`http://localhost:3105/comment/all/${props.params}`)
+        .then((res) => {
+            console.log(res.data.length);
+            setCommentLength(res.data.length);
+        })
+    });
+    
   return (
     <div className='xl:ml-[300px] border-x border-secondaryHover xl:min-w-[672px] sm:ml-[70px] flex-grow max-w-2xl'>
         <div className='flex py-2 px-3 justify-between sticky top-0 z-50 bg-neutral border-b border-secondaryHover'>
@@ -59,9 +80,10 @@ export default function PostDetails(props) {
             return <Comment key={val.idPost} post={val}/>
         })}
         <div className='flex justify-end mt-2'>
-        {listComment.length > 5 && 
+        {commentLength > listComment.length && 
         <button 
             className='bg-blue-400 text-white font-bold mx-2 px-2 py-1 rounded-full hover:brightness-90'
+            onClick={getMoreComment}
         >
             Show More
         </button>

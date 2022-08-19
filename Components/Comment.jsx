@@ -8,7 +8,6 @@ export default function Comment(props) {
   return (
     <div className=''>
       <div className='flex p-3  py-1 cursor-pointer border-y border-secondaryHover'>
-          {/* foto */}
           <img 
             src={props.post.user_profilepicture ? 'http://localhost:3105' + props.post.user_profilepicture : '/default.jpg'}
             alt="profile-img" 

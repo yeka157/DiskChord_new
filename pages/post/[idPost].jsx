@@ -21,13 +21,13 @@ export default function Post(props) {
 
 export async function getStaticPaths (context) {
   try {
-    let result = await Axios.get('http://localhost:3105/tweet/all');
+    let result = await Axios.get('http://localhost:3105/tweet/allPost');
     // console.log(result);
     let paths = [];
     for (let i = 0; i<result.data.length; i++) {
       paths.push({params : {idPost : `${result.data[i].idPost}`}});
     }
-    // console.log(paths);
+    console.log(paths);
     // console.log(context);
     return {
       paths,

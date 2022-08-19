@@ -18,6 +18,10 @@ export default function Home() {
   const [data, setData] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
   const [throttle, setThrottle] = React.useState(false);
+  const [forgot, setForgot] = React.useState(false);
+  const [forgotEmail, setForgotEmail] = React.useState('');
+  const [buttonReset, setButtonReset] = React.useState(true);
+
   const router = useRouter();
   const toast = useToast();
 
@@ -75,6 +79,39 @@ export default function Home() {
 
   const btnForgot = () => {
     console.log("test");
+    if (forgot) {
+      setForgot(false);
+      setTextInput('');
+      setPassword('');
+    } else if (!forgot) {
+      setForgot(true);
+      setForgotEmail('');
+    }
+  }
+
+  const btnSendReset = async() => {
+    try {
+      var mailFormat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+      if (forgotEmail.match(mailFormat)) {
+        let res = await Axios.post(`http://localhost:3105/auth/sendEmail`, {
+          email : forgotEmail
+        });
+        if (res.data.success) {
+          localStorage.setItem('resetJwt', res.data.token);
+          toast({
+            title : 'Email sent',
+            description : 'Please check your email',
+            status : 'success',
+            duration : 3000,
+            isClosable : true
+          })
+          setForgotEmail('');
+          setForgot(false);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   React.useEffect(() => {
@@ -119,7 +156,17 @@ export default function Home() {
       setUsername(textInput);
       setEmail('');
     }
-  }, [textInput, email, username])
+  }, [textInput, email, username]);
+
+  React.useEffect(() => {
+    let text = forgotEmail.replace(/^\s+|\s+$/gm, "");
+    if (text) {
+      setButtonReset(false);
+    } else {
+      setButtonReset(true);
+    }
+  })
+
   return (
     <div>
       <Head>
@@ -184,21 +231,40 @@ export default function Home() {
                       <Divider borderColor='#040615' />
                     </div>
                   </div>
-                  <div className='flex flex-col items-center space-y-3.5'>
-                    <input type='text' placeholder='Username or Email' value={textInput} className='rounded-full bg-bgInput w-full md:w-[50%] border-gray-400' onChange={(e) => {setTextInput(e.target.value)}} />
-                    <div className='w-full relative'>
-                      <input type={visibility} placeholder='Password' value={password} className='rounded-full bg-bgInput w-full md:w-[50%] border-gray-400' onChange={(e) => {setPassword(e.target.value)}} />
-                      <span className='bg-transparent border-0 rounded-full absolute cursor-pointer top-1 right-56 py-2 px-4' onClick={btnShow}>
-                        {visibility === "password" ? <AiOutlineEye/> : <AiOutlineEyeInvisible/>}
-                      </span>
+                  {forgot ? (
+                    <>
+                    <div className='flex flex-col items-center space-y-3.5'>
+                      <input type='text' placeholder='Email' value={forgotEmail} className='rounded-full bg-bgInput w-full md:w-[50%] border-gray-400' onChange={(e) => {setForgotEmail(e.target.value)}}/>
                     </div>
-                    <Checkbox className='text-start px-2.5 w-full md:w-[50%] text-sm'>Keep me signed in</Checkbox>
-                    <p className='text-end px-2.5 w-full md:w-[50%] text-sm hover:underline hover:text-primary cursor-pointer' onClick={btnForgot}>Forgot Password?</p>
-                  </div>
-                  {throttle ? <><Spinner size='md' thickness='4px' speed='0.7s' emptyColor='gray.200' color='blue.400'/></> : 
-                    <button className='bg-telegram hover:brightness-90 w-40 h-12 rounded-full text-neutral font-bold disabled:opacity-50 disabled:hover:brightness-100' 
-                    onClick={btnLogin} disabled={button}>Sign In</button>
-                  }
+                    <div className='space-x-5'>
+                    <button className='bg-telegram hover:brightness-90 w-32 h-12 rounded-full text-neutral font-bold disabled:opacity-50 disabled:hover:brightness-100'
+                      onClick={btnSendReset} disabled={buttonReset}
+                      >
+                      Send
+                    </button>
+                    <button className='w-32 h-12 rounded-full bg-facebook text-neutral font-bold hover:brightness-90' onClick={btnForgot}>Back</button>
+                    </div>
+                    </>
+                  ) : (
+                    <>
+                    <div className='flex flex-col items-center space-y-3.5'>
+                      <input type='text' placeholder='Username or Email' value={textInput} className='rounded-full bg-bgInput w-full md:w-[50%] border-gray-400' onChange={(e) => {setTextInput(e.target.value)}} />
+                      <div className='w-full relative'>
+                        <input type={visibility} placeholder='Password' value={password} className='rounded-full bg-bgInput w-full md:w-[50%] border-gray-400' onChange={(e) => {setPassword(e.target.value)}} />
+                        <span className='bg-transparent border-0 rounded-full absolute cursor-pointer top-1 right-56 py-2 px-4' onClick={btnShow}>
+                          {visibility === "password" ? <AiOutlineEye/> : <AiOutlineEyeInvisible/>}
+                        </span>
+                      </div>
+                      <Checkbox className='text-start px-2.5 w-full md:w-[50%] text-sm'>Keep me signed in</Checkbox>
+                      <p className='text-end px-2.5 w-full md:w-[50%] text-sm hover:underline hover:text-primary cursor-pointer' onClick={btnForgot}>Forgot Password?</p>
+                    </div>
+                    {throttle ? <><Spinner size='md' thickness='4px' speed='0.7s' emptyColor='gray.200' color='blue.400'/></> : 
+                      <button className='bg-telegram hover:brightness-90 w-40 h-12 rounded-full text-neutral font-bold disabled:opacity-50 disabled:hover:brightness-100' 
+                      onClick={btnLogin} disabled={button}>Sign In</button>
+                    }
+                    </>
+                  )
+                }
                 </div>
               </div>
             </div>
