@@ -29,7 +29,6 @@ export default function Timeline() {
                 offset : list.length,
                 limit : 10
             })
-            console.log(res.data);
             if (res.data.length > 0) {
                 setList([...list, ...res.data]);
             } else {
@@ -52,7 +51,7 @@ export default function Timeline() {
             })
             if (res.data.length > 0) {
                 setList(res.data);
-                console.log("berhasil");
+                // console.log("berhasil");
             }
         } catch (error) {
             console.log(error);
@@ -66,7 +65,6 @@ export default function Timeline() {
             <div className='hoverMouse flex items-center justify-center px-0 ml-auto w-10 h-10'><MusicNoteIcon className='h-6'/></div>
         </div>
         <Tweet function={refreshPost}/>
-        {/* <button onClick={getMorePost} className='my-5 bg-slate-700 text-neutral'>TESTING</button> */}
         <InfiniteScroll 
             dataLength={list.length} 
             next={getMorePost} 

@@ -9,8 +9,6 @@ import Link from 'next/link';
 export default function Feed(props) {
     const [refresh, setRefresh] = React.useState(false);
     const [like, setLike] = React.useState(false);
-    const [totalLike, setTotalLike] = React.useState(0);
-    const [totalComment, setTotalComment] = React.useState(0);
     const [data, setData] = React.useState([]);
     const [edit, setEdit] = React.useState(true);
     const [button, setButton] = React.useState(false);
@@ -22,33 +20,61 @@ export default function Feed(props) {
         setRefresh(!refresh);
     }
 
-    const btnLike = () => {
-        // add to mySQL
-        // props.function()
-        // if (!like) {
-        //     Axios.post('http://localhost:3105/likes/add', {
-        //         idPost : props.post.idPost,
-        //         user_id : res.data.idusers
-        //     }).then((res) => {
-        //         setLike(!like);
-        //         let total = totalLike
-        //         setTotalLike(total++);
-        //     })
-        // } else if (like) {
-        //     Axios.post('http://localhost:3105/likes/unlike', {
-        //         id : props.post.idPost,
-        //         user_id : res.data.idusers
-        //     }).then((res) => {
-        //         setLike(!like);
-        //         setTotalLike(totalLike--);
-        //     })
-        // }
+    const btnLike = async() => {
+        try {
+            console.log(data.idusers);
+            console.log(props.post.idPost);
+            let res = await Axios.post(`http://localhost:3105/likes/add`, {
+                idPost : props.post.idPost,
+                user_id : data.idusers
+            })
+            if (res.data.success) {
+                setLike(!like);
+                props.function();
+            }
+        } catch (error) {
+            console.log(error);
+        }
     }
+    // add to mySQL
+    // props.function()
+    // if (!like) {
+    //     Axios.post('http://localhost:3105/likes/add', {
+    //         idPost : props.post.idPost,
+    //         user_id : res.data.idusers
+    //     }).then((res) => {
+    //         setLike(!like);
+    //         let total = totalLike
+    //         setTotalLike(total++);
+    //     })
+    // } else if (like) {
+    //     Axios.post('http://localhost:3105/likes/unlike', {
+    //         id : props.post.idPost,
+    //         user_id : res.data.idusers
+    //     }).then((res) => {
+    //         setLike(!like);
+    //         setTotalLike(totalLike--);
+    //     })
+    // }
 
-    const btnUnlike = () => {
+    const btnUnlike = async() => {
+        try {
+            console.log(data.idusers);
+            console.log(props.post.idPost);
+            let res = await Axios.delete(`http://localhost:3105/likes/unlike`, {
+                idPost : props.post.idPost,
+                user_id : data.idusers
+            });
+            if (res.data.success) {
+                setLike(false);
+                props.function();
+            }
+        } catch (error) {
+            console.log(error);
+        }
         //delete mysql
         //props.function()
-    }
+    } // belum kepake
 
     const btnEdit = () => {
         setEdit(!edit);
@@ -91,8 +117,9 @@ export default function Feed(props) {
                 }
             })
         };
+        console.log(props.post.likes.some(val=> val.user_id === data.idusers));
     }, []);
-    
+
   return (
     <div className='flex p-3 cursor-pointer border-b border-secondaryHover'>
 
@@ -134,7 +161,7 @@ export default function Feed(props) {
                 <HiRefresh className='text-green-400 hoverEmoji h-9 w-9 p-2' onClick={btnChangeGreen}/> :
                 <HiOutlineRefresh className='hoverEmoji h-9 w-9 p-2 text-gray-600 hover:text-green-400' onClick={btnChangeGreen}/>
                  }
-                {like ? 
+                {props.post.likes.some(val=> val.user_id === data.idusers) ? 
                 <div className='flex items-center justify-center cursor-pointer w-[50px]' onClick={btnLike}>
                     <p>{props.post.likes.length}</p> 
                     <HiHeart className='text-red-500 hoverEmoji h-9 w-9 p-2'/> 

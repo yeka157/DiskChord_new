@@ -5,8 +5,9 @@ import Bio from "./Bio";
 import Feed from "./Feed";
 import Axios from 'axios';
 import NewBio from "./NewBio";
+import Tabs from "./Tabs";
 
-export default function Profile() {
+export default function Profile(props) {
 
   const [list, setList] = React.useState([]);
   const [data, setData] = React.useState([]);
@@ -57,7 +58,7 @@ export default function Profile() {
         }
       })
     }
-  }, [])
+  }, []);
 
   return (
     <div className="xl:ml-[300px] border-x border-secondaryHover xl:min-w-[672px] sm:ml-[70px] flex-grow max-w-2xl">
@@ -82,9 +83,10 @@ export default function Profile() {
         </div>
       </div>
       <NewBio user={data} function={refreshUser}/>
+      <Tabs active={props.open}/>
       {/* <Bio /> */}
       {list.map((val) => {
-        return <Feed key={val.id} post={val} user={data} function={getPost}/>;
+        return <Feed key={val.idPost} post={val} user={data} function={getPost}/>;
       })}
     </div>
   );

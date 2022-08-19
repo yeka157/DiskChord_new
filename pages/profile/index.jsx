@@ -41,7 +41,7 @@ export default function index() {
       </Head>
       <section className='flex min-h-screen max-w-7xl mx-auto'>
         <Sidebar active="profile"/>
-        <Profile/>
+        <Profile open="tweet"/>
       </section>
     </div>
   )
