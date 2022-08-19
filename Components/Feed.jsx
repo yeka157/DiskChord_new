@@ -36,26 +36,6 @@ export default function Feed(props) {
             console.log(error);
         }
     }
-    // add to mySQL
-    // props.function()
-    // if (!like) {
-    //     Axios.post('http://localhost:3105/likes/add', {
-    //         idPost : props.post.idPost,
-    //         user_id : res.data.idusers
-    //     }).then((res) => {
-    //         setLike(!like);
-    //         let total = totalLike
-    //         setTotalLike(total++);
-    //     })
-    // } else if (like) {
-    //     Axios.post('http://localhost:3105/likes/unlike', {
-    //         id : props.post.idPost,
-    //         user_id : res.data.idusers
-    //     }).then((res) => {
-    //         setLike(!like);
-    //         setTotalLike(totalLike--);
-    //     })
-    // }
 
     const btnUnlike = async() => {
         try {
@@ -72,9 +52,7 @@ export default function Feed(props) {
         } catch (error) {
             console.log(error);
         }
-        //delete mysql
-        //props.function()
-    } // belum kepake
+    } 
 
     const btnEdit = () => {
         setEdit(!edit);
