@@ -9,6 +9,9 @@ export default function TweetReply(props) {
   const onPost = async() => {
     try {
       // console.log(props);
+      console.log(data.idusers);
+      console.log(textField);
+      console.log(props);
       let res = await Axios.post(`http://localhost:3105/comment/add/${props.id}`, {
         text : textField,
         idusers : data.idusers

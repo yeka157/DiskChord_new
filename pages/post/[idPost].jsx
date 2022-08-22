@@ -27,7 +27,7 @@ export async function getStaticPaths (context) {
     for (let i = 0; i<result.data.length; i++) {
       paths.push({params : {idPost : `${result.data[i].idPost}`}});
     }
-    console.log(paths);
+    // console.log(paths);
     // console.log(context);
     return {
       paths,
