@@ -21,6 +21,7 @@ export default function Register() {
   const [data, setData] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
   const [throttle, setThrottle] = React.useState(false);
+  const [valid, setValid] = React.useState(false);
   const toast = useToast();
   const router = useRouter();
 
@@ -130,25 +131,34 @@ export default function Register() {
 
   React.useEffect(() => {
     if (email) {
-      Axios.post("http://localhost:3105" + "/auth/email", {
-        email,
-      }).then((res) => {
-        if (res.data.length > 0) {
-          let check = [];
-          for (let i = 0; i < res.data.length; i++) {
-            if (res.data[i].email.toLowerCase() === email.toLowerCase()) {
-              check.push(true);
+      var mailFormat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+      if (email.match(mailFormat)) {
+        setValid(true);
+        Axios.post("http://localhost:3105" + "/auth/email", {
+          email,
+        }).then((res) => {
+          if (res.data.length > 0) {
+            let check = [];
+            for (let i = 0; i < res.data.length; i++) {
+              if (res.data[i].email.toLowerCase() === email.toLowerCase()) {
+                check.push(true);
+              }
             }
-          }
-          if (check.length > 0) {
-            setUsedEmail(true);
+            if (check.length > 0) {
+              setUsedEmail(true);
+              setEmailMsg('Email already used, try another email');
+            } else {
+              setUsedEmail(false);
+              setEmailMsg('Email available');
+            }
           } else {
             setUsedEmail(false);
           }
-        } else {
-          setUsedEmail(false);
-        }
-      });
+        });
+      } else {
+        setValid(false);
+        setEmailMsg('Please enter a valid email');
+      }
     }
   }, [email]);
 
@@ -329,16 +339,21 @@ export default function Register() {
                   {email ? (
                     usedEmail ? (
                       <small className="my-1 text-left w-full md:w-[50%] px-4 text-red-500 font-bold">
-                        Email already used, try another email
+                        {emailMsg}
                       </small>
                     ) : (
+                      valid ? (
                       <small className="my-1 text-left w-full md:w-[50%] px-4 text-green-400 font-bold">
                         Email available
                       </small>
+                      ) : 
+                    <small className="my-1 text-left w-full md:w-[50%] px-4 text-red-400 font-bold">
+                      {emailMsg}
+                    </small>
                     )
                   ) : (
-                    <small className="my-1 text-left w-full md:w-[50%] px-4 text-green-400 font-bold">
-                      {emailMsg}
+                    <small className="my-1 text-left w-full md:w-[50%] px-4 text-red-400 font-bold">
+                      
                     </small>
                   )}
                   <div className="flex flex-col w-full items-center justify-center">

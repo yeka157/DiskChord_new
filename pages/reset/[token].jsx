@@ -68,7 +68,7 @@ export default function Index(props) {
           console.log(props.token);
           toast({
             title : 'Link expired',
-            description : 'Verification Link Expired, Please Re-send reset password email',
+            description : 'Reset Password Link Expired, Please Re-send reset password email',
             status : 'error',
             duration : 3000,
             isClosable : true

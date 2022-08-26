@@ -48,8 +48,6 @@ export default function PostDetails(props) {
     React.useEffect(()=> {
         getPost();
         getComment();
-        // console.log(props.params);
-        // console.log(list);
     }, []);
 
     React.useEffect(() => {
@@ -58,7 +56,7 @@ export default function PostDetails(props) {
             console.log(res.data.length);
             setCommentLength(res.data.length);
         })
-    });
+    }, [commentLength, props.params]);
     
   return (
     <div className='xl:ml-[300px] border-x border-secondaryHover xl:min-w-[672px] sm:ml-[70px] flex-grow max-w-2xl'>

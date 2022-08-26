@@ -37,23 +37,6 @@ export default function Feed(props) {
         }
     }
 
-    const btnUnlike = async() => {
-        try {
-            console.log(data.idusers);
-            console.log(props.post.idPost);
-            let res = await Axios.delete(`http://localhost:3105/likes/unlike`, {
-                idPost : props.post.idPost,
-                user_id : data.idusers
-            });
-            if (res.data.success) {
-                setLike(false);
-                props.function();
-            }
-        } catch (error) {
-            console.log(error);
-        }
-    } 
-
     const btnEdit = () => {
         setEdit(!edit);
         setButton(true);
@@ -96,6 +79,7 @@ export default function Feed(props) {
             })
         };
         console.log(props.post.likes.some(val=> val.user_id === data.idusers));
+        console.log(props);
     }, []);
 
   return (
